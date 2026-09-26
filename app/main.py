@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+
+from app.api.router import api_router
 from app.database.base import Base
 from app.database.session import engine
 
@@ -13,3 +15,5 @@ Base.metadata.create_all(bind=engine)
 @app.get("/", tags=["Root"])
 def home():
     return {"message": "Welcome to electronics ecommerce API"}
+
+app.include_router(api_router, prefix="/api/v1")
