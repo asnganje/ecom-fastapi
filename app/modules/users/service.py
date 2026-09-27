@@ -36,7 +36,7 @@ class UserService():
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="User not found"
             )
-        changes = payload.model_dump(exclude_unset=True)
+        changes = payload.model_dump(exclude_unset=True, exclude_none=True)
         if "full_name" in changes.keys():
             user.full_name = changes["full_name"]
         db_user = self.repository.update_user(user)
