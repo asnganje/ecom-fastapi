@@ -17,3 +17,6 @@ class UserRead(UserBase):
 
     class Config:
         from_attributes = True
+
+class UserUpdate(BaseModel):
+    full_name: str | None
