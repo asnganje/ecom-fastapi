@@ -5,7 +5,7 @@ from datetime import datetime
 
 class Category(Base):
     __tablename__ = "categories"
-    id: Mapped[int] = mapped_column(Integer)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name:Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
     is_active:Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     description: Mapped[str] = mapped_column(String(255), nullable=False)

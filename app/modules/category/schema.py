@@ -3,15 +3,15 @@ from pydantic import BaseModel
 class CategoryBase(BaseModel):
     name:str
     description:str
-    parent_id:int
+    parent_id:int | None = None
 
 class CategoryCreate(CategoryBase):
     pass
 
 class CategoryUpdate(BaseModel):
-    name:str|None
-    description:str|None
-    parent_id:int|None
+    name:str|None=None
+    description:str|None=None
+    parent_id:int|None=None
 
 
 class CategoryRead(CategoryBase):

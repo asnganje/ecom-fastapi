@@ -29,11 +29,11 @@ class CategoryService():
 
     def create_category(self, category:Category)->CategoryCreate:
         if category.parent_id is not None:
-            parent_category = self.repository.get_category_by_id(category.id)
-            if parent_category is not None:
+            parent_category = self.repository.get_category_by_id(category.parent_id)
+            if parent_category is None:
                 raise HTTPException(
-                    status_code=status.HTTP_409_CONFLICT,
-                    detail="Category already exists!"
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Category not found!"
                 )
         db_Category = Category(**category.model_dump())
         saved_category = self.repository.create_category(db_Category)
@@ -46,7 +46,7 @@ class CategoryService():
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Category not found!"
             )
-        changes = payload.model_dump(exclude_unset=True)
+        changes = payload.model_dump(exclude_unset=True, exclude_none=True)
         if "parent_id" in changes:
             parent_id = changes["parent_id"]
             if parent_id == category_id:
