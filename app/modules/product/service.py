@@ -1,3 +1,4 @@
+from math import ceil
 from unittest import result
 
 from fastapi import HTTPException, status
@@ -16,10 +17,18 @@ class ProductService():
         payload = ProductRead.model_validate(product)
         payload.selling_price = calculate_selling_price(payload.price, payload.discount_percent)
         return payload
-    def get_all_products(self)->list[ProductRead]:
-        products = self.repository.get_all_products()
+    def get_all_products(self, page:int, limit:int)->dict:
+        products, total = self.repository.get_all_products(page, limit)
         results = [self._serialize_product(product) for product in products]
-        return results
+        return {
+            "products":results,
+            "pagination":{
+                "page":page,
+                "limit":limit,
+                "total":total,
+                "total_pages":ceil(total/limit)
+            }
+        }
     def get_product(self, product_id:int) -> ProductRead:
         product = self.repository.get_product_by_id(product_id)
         if product is None:

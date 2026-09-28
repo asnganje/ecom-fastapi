@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter, status, Depends, HTTPException
+from fastapi import APIRouter, status, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.common.dependencies import get_db, get_current_user
@@ -11,9 +11,13 @@ from app.modules.users.schemas import UserRole
 router = APIRouter()
 
 @router.get("/", status_code=status.HTTP_200_OK)
-def get_all_products(db: Session=Depends(get_db)) -> list[ProductRead]:
+def get_all_products(
+        page:int = Query(default=1, ge=1),
+        limit:int = Query(default=10, ge=1, le=100),
+        db: Session=Depends(get_db)
+        ) -> dict:
     service = ProductService(db)
-    response = service.get_all_products()
+    response = service.get_all_products(page, limit)
     return response
 
 @router.get("/{product_id}", status_code=status.HTTP_200_OK)
