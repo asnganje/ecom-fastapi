@@ -1,7 +1,5 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy.testing import exclude
-
 from app.modules.category.model import Category
 from app.modules.category.repository import CategoryRepository
 from app.modules.category.schema import CategoryRead, CategoryCreate, CategoryUpdate
@@ -27,7 +25,7 @@ class CategoryService():
         result = self._dump_category(category)
         return result
 
-    def create_category(self, category:Category)->CategoryCreate:
+    def create_category(self, category:Category)->CategoryRead:
         if category.parent_id is not None:
             parent_category = self.repository.get_category_by_id(category.parent_id)
             if parent_category is None:
