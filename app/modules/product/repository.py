@@ -7,10 +7,45 @@ from app.modules.product.model import Product
 class ProductRepository():
     def __init__(self, db: Session):
         self.db = db
-    def get_all_products(self, page:int, limit:int) -> tuple[list[Product], int]:
+    def get_all_products(self, page:int, limit:int,
+                         category_id: int | None= None,
+                         brand_name: str | None = None,
+                         is_active: bool | None = None,
+                         min_price: float | None = None,
+                         max_price: float | None = None,
+                         sort_price:str | None=None
+                         ) -> tuple[list[Product], int]:
+
+
         statement = select(Product)
         count_statement = select(func.count()).select_from(Product)
+
+        if category_id is not None:
+            statement = statement.where(Product.category_id == category_id)
+            count_statement = count_statement.where(Product.category_id == category_id)
+        if brand_name is not None:
+            brand_conditions = func.lower(Product.brand_name) == brand_name.lower()
+            statement = statement.where(brand_conditions)
+            count_statement = count_statement.where(brand_conditions)
+        if is_active is not None:
+            statement = statement.where(Product.is_active.is_(is_active))
+            count_statement = count_statement.where(Product.is_active.is_(is_active))
+        if min_price is not None:
+            statement=statement.where(Product.price >= min_price)
+            count_statement=count_statement.where(Product.price >= min_price)
+        if max_price is not None:
+            statement=statement.where(Product.price <= max_price)
+            count_statement=count_statement.where(Product.price <= max_price)
+
         total = self.db.scalar(count_statement) or 0
+
+        if sort_price == "asc":
+            statement = statement.order_by(Product.price.asc())
+        elif sort_price == "desc":
+            statement = statement.order_by(Product.price.desc())
+        else:
+            statement = statement.order_by(Product.id.asc())
+
         offset  = (page-1)*limit
         products = self.db.scalars(statement.offset(offset).limit(limit)).all()
         return products, total

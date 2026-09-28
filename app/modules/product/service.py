@@ -17,8 +17,23 @@ class ProductService():
         payload = ProductRead.model_validate(product)
         payload.selling_price = calculate_selling_price(payload.price, payload.discount_percent)
         return payload
-    def get_all_products(self, page:int, limit:int)->dict:
-        products, total = self.repository.get_all_products(page, limit)
+    def get_all_products(self, page:int, limit:int,
+                         category_id: int | None = None,
+                         brand_name: str | None = None,
+                         is_active: bool | None = None,
+                         min_price: float | None = None,
+                         max_price: float | None = None,
+                         sort_price: str | None = None
+                         )->dict:
+        products, total = self.repository.get_all_products(page,
+                                                           limit,
+                                                           category_id,
+                                                           brand_name,
+                                                           is_active,
+                                                           min_price,
+                                                           max_price,
+                                                           sort_price
+                                                           )
         results = [self._serialize_product(product) for product in products]
         return {
             "products":results,

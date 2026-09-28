@@ -14,10 +14,24 @@ router = APIRouter()
 def get_all_products(
         page:int = Query(default=1, ge=1),
         limit:int = Query(default=10, ge=1, le=100),
+        category_id:int |None = Query(default=None, gt=0),
+        brand_name: str | None = Query(default=None, min_length=1),
+        is_active: bool | None = Query(default=None),
+        min_price: float | None = Query(default=None, ge=0),
+        max_price: float | None = Query(default=None, ge=0),
+        sort_price:str | None= Query(default=None, pattern="^(asc|desc)$"),
         db: Session=Depends(get_db)
         ) -> dict:
     service = ProductService(db)
-    response = service.get_all_products(page, limit)
+    response = service.get_all_products(page,
+                                        limit,
+                                        category_id,
+                                        brand_name,
+                                        is_active,
+                                        min_price,
+                                        max_price,
+                                        sort_price
+                                        )
     return response
 
 @router.get("/{product_id}", status_code=status.HTTP_200_OK)
