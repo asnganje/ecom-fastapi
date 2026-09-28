@@ -1,4 +1,4 @@
-from sqlalchemy import select, func
+from sqlalchemy import select, func, or_
 from sqlalchemy.orm import Session
 
 from app.modules.product.model import Product
@@ -63,3 +63,15 @@ class ProductRepository():
     def delete_product(self, product:Product)->None:
         self.db.delete(product)
         self.db.commit()
+
+    def search(self, query:str)->list[Product]:
+        search_term=f"%{query}%"
+        statement = select(Product).where(
+            or_(
+                Product.name.ilike(search_term),
+                Product.brand_name.ilike(search_term),
+                Product.description.ilike(search_term)
+                )
+        ).order_by(Product.id.asc())
+        return self.db.scalars(statement).all()
+

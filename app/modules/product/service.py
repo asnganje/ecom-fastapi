@@ -78,4 +78,7 @@ class ProductService():
             )
         self.repository.delete_product(db_product)
 
+    def search_product(self, query:str)->list[ProductRead]:
+        products = self.repository.search(query)
+        return [self._serialize_product(product) for product in products]
 
