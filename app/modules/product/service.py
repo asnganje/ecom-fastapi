@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.modules.product.model import Product
 from app.modules.product.repository import ProductRepository
-from app.modules.product.schema import ProductRead, ProductUpdate
+from app.modules.product.schema import ProductRead, ProductUpdate, ProductCreate
 from app.common.price import calculate_selling_price
 
 
@@ -29,7 +29,7 @@ class ProductService():
             )
         prod_output = self._serialize_product(product)
         return prod_output
-    def create_product(self, product:ProductRead) -> ProductRead:
+    def create_product(self, product:ProductCreate) -> ProductRead:
         db_product = Product(**product.model_dump())
         saved_product = self.repository.create_product(db_product)
         return self._serialize_product(saved_product)
@@ -41,7 +41,7 @@ class ProductService():
                 detail="Product not found!"
             )
         changes = payload.model_dump(exclude_none=True, exclude_unset=True)
-        for field,value in changes.items:
+        for field,value in changes.items():
             setattr(db_product, field, value)
         updated_product = self.repository.update_product(db_product)
         return self._serialize_product(updated_product)
