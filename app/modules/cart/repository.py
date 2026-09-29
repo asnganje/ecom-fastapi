@@ -9,7 +9,7 @@ class CartRepository():
         self.db = db
     def get_active_cart_by_user_id(self, user_id) -> Cart | None:
         statement = select(Cart).where(Cart.user_id == user_id, Cart.is_active.is_(True))
-        return self.db.scalar(statement).first()
+        return self.db.scalar(statement)
     def create_cart(self, cart:Cart) -> Cart:
         self.db.add(cart)
         self.db.commit()
@@ -44,6 +44,7 @@ class CartRepository():
 
     def clear_cart_items(self, cart_id:int):
         statement = delete(CartItem).where(CartItem.cart_id == cart_id)
+        self.db.execute(statement)
         self.db.commit()
 
 

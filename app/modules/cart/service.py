@@ -137,11 +137,11 @@ class CartService:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Stock not available"
             )
-        item.quantity = payload.quantity
+        item.quantity += payload.quantity
         self.cart_repository.update_cart_item(item)
         return self._build_cart_response(user_id, cart)
 
-    def delete_item(self, current_user:User, item_id:int):
+    def delete_item(self, current_user:User, item_id:int)->CartRead:
         user_id = current_user.id
         cart = self.cart_repository.get_active_cart_by_user_id(user_id)
         if cart is None:
@@ -157,9 +157,9 @@ class CartService:
                 detail="Cart item not found"
             )
         self.cart_repository.delete_cart_item(item)
-        self._build_cart_response(user_id, cart)
+        return self._build_cart_response(user_id, cart)
 
-    def clear_cart(self, current_user:User):
+    def clear_cart(self, current_user:User)->CartRead:
         user_id = current_user.id
         cart = self.cart_repository.get_active_cart_by_user_id(user_id)
         if cart is None:
@@ -168,7 +168,7 @@ class CartService:
                 detail="Cart not found"
             )
         self.cart_repository.clear_cart_items(cart.id)
-        self._build_cart_response(user_id, cart)
+        return self._build_cart_response(user_id, cart)
 
 
 

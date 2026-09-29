@@ -8,7 +8,7 @@ class UpdateCartItemRequest(BaseModel):
     quantity:int = Field(gt=0)
 
 
-class CartProductSummary:
+class CartProductSummary(BaseModel):
     id:int
     name: str
     image_url: str
