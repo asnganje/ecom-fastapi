@@ -159,7 +159,7 @@ class CartService:
         self.cart_repository.delete_cart_item(item)
         self._build_cart_response(user_id, cart)
 
-    def clear_cart(self, current_user:User, cart_id:int):
+    def clear_cart(self, current_user:User):
         user_id = current_user.id
         cart = self.cart_repository.get_active_cart_by_user_id(user_id)
         if cart is None:
