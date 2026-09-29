@@ -42,7 +42,7 @@ class CartRepository():
         self.db.delete(cart_item)
         self.db.commit()
 
-    def clear_cart_items(self, cart_id:int)->None:
+    def clear_cart_items(self, cart_id:int):
         statement = delete(CartItem).where(CartItem.cart_id == cart_id)
         self.db.commit()
 
