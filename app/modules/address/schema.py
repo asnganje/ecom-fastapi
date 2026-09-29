@@ -9,7 +9,7 @@ class AddressBase(BaseModel):
     city:str
     state:str
     postal_code:str
-    county:str=Field(default="Kenya")
+    country:str=Field(default="Kenya")
     is_default:bool=Field(default=False)
 
 class AddressCreate(AddressBase):
@@ -23,7 +23,7 @@ class AddressUpdate(BaseModel):
     city:str| None = None
     state:str| None = None
     postal_code:str| None = None
-    county:str| None = None
+    country:str| None = None
     is_default:bool| None = None
 
 class AddressRead(AddressBase):

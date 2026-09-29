@@ -15,6 +15,6 @@ class Address(Base):
     city:Mapped[str] = mapped_column(String(100), nullable=False)
     state:Mapped[str] = mapped_column(String(100), nullable=False)
     postal_code:Mapped[str] = mapped_column(String(20), nullable=False)
-    county:Mapped[str] = mapped_column(String(100), nullable=False, default="Kenya")
+    country:Mapped[str] = mapped_column(String(100), nullable=False, default="Kenya")
     is_default:Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
