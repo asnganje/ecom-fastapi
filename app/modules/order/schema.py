@@ -28,7 +28,7 @@ class OrderItemRead(BaseModel):
     quantity:int
     unit_price:float
     unit_selling_price:float
-    subtotal:float
+    sub_total:float
 
     class Config:
         from_attributes = True

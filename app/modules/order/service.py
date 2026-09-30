@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.functions import current_user
 
 from app.common.price import calculate_selling_price
 from app.modules.address.repository import AddressRepository
@@ -68,8 +69,8 @@ class OrderService():
                     detail="Insufficient stock"
                 )
             unit_selling_price = calculate_selling_price(product.price, product.discount_percent)
-            subtotal = unit_selling_price*cart_item.quantity
-            total_amount += subtotal
+            sub_total = unit_selling_price*cart_item.quantity
+            total_amount += sub_total
             total_items += cart_item.quantity
             product.stock_quantity -= cart_item.quantity
 
@@ -78,9 +79,10 @@ class OrderService():
                 product_id=product.id,
                 product_name=product.name,
                 quantity=cart_item.quantity,
+                product_img_url=product.image_url,
                 unit_price=product.price,
                 unit_selling_price=unit_selling_price,
-                subtotal=subtotal
+                sub_total=sub_total
             )
 
             order_items.append(order_item)
@@ -103,7 +105,12 @@ class OrderService():
         orders = self.order_repository.get_order_by_user_id(current_user.id)
         return [self._dump_order(order) for order in orders]
 
-    def list_all_orders(self)->list[OrderRead]:
+    def list_all_orders(self, current_user:User)->list[OrderRead]:
+        if current_user.role != UserRole.ADMIN.value:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Access denied"
+            )
         orders = self.order_repository.get_all_orders()
         return [self._dump_order(order) for order in orders]
     def get_order(self, current_user:User, order_id:int)->OrderRead:
@@ -120,6 +127,11 @@ class OrderService():
             )
         return self._dump_order(order)
     def update_order_status(self, order_id:int, current_user:User, payload:OrderStatusUpdate)->OrderRead:
+        if current_user.role != UserRole.ADMIN.value:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Access denied"
+            )
         order = self.order_repository.get_order_by_id(order_id)
         if order is None:
             raise HTTPException(
