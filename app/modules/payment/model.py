@@ -15,7 +15,7 @@ class Payment(Base):
     status:Mapped[str] = mapped_column(String(32), nullable=False, default="PENDING")
     payment_link_url:Mapped[str]=mapped_column(String(500), nullable=False)
     provider_payment_link_id:Mapped[str] = mapped_column(String(255), nullable=False)
-    provider_payment_id:Mapped[str | None] = mapped_column(String(255), nullable=False)
+    provider_payment_id:Mapped[str | None] = mapped_column(String(255), nullable=True)
 
 
 
